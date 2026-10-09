@@ -1,0 +1,8 @@
+{
+  "source_commit": "e4e234b",
+  "description": "Static EVEE+ demo exported from published Hock/KS research data. No server, credentials, model weights or source repository history included.",
+  "files": {
+    "index.html": "2fadd58cab0039128963bd7d297937b54b392c9b48f31282eb7aca0b17c5aa68",
+    "ks.html": "8ffaa9559ea5aa9be7d24e34625f14fdc9459fc0da18ba968033c78a05b4d092"
+  }
+}
