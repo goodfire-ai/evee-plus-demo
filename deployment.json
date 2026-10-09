@@ -1,8 +1,8 @@
 {
-  "source_commit": "9a13b219e328bc8277626ff0b736ee8ed4e9d647",
+  "source_commit": "2e53ec76360e1e29650a64e76465ddcb2e19609c",
   "description": "Static EVEE+ demo exported from published Hock/KS research data. No server, credentials, model weights or source repository history included.",
   "files": {
-    "index.html": "263396b9b8fb1a1b4f50391d991c7e235c984a3c83d28d996ea022cb77d05119",
-    "ks.html": "cf46d7e88f62af7233b98bd6aac3015c9469a54804bf1026519f919051f95a31"
+    "index.html": "c492375bb37948317a7a763eed98d1c142037f9544a004d441045c36c2eb36ac",
+    "ks.html": "a500e218999f6783138024bf6878179d366bc4dd6adc5faffc97a409292f1298"
   }
 }
