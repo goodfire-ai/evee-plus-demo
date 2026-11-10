@@ -1,0 +1,1692 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EVEE+ · Synthetic multimodal preview</title><style>
+/* Goodfire design system — tokens read from goodfire.com (see .claude/skills/goodfire-design/tokens/). */
+:root {
+  --gf-red: #b22935;
+  --gf-orange: #c4652d;
+  --gf-orange-dark: #854208;
+  --gf-gold: #eab651;
+  --gf-ink: #1d272a;
+  --gf-ink-2: #646464;
+  --gf-ink-3: #7b7b7b;
+  --gf-ink-4: #b4b4b4;
+  --gf-paper: #f6f5f0;
+  --gf-paper-2: #f9faf5;
+  --gf-white: #ffffff;
+  --gf-line: #e7eae6;
+  --gf-line-2: #b4b4b4;
+  --gf-dark: #1d272a;
+  --gf-footer: #716e61;
+  --gf-gold-1: #de9d50;
+  --gf-gold-2: #c58a44;
+  --gf-gold-3: #af763a;
+  --gf-slate-1: #7495ab;
+  --gf-slate-2: #5e7d95;
+  --gf-slate-3: #4e728a;
+  --mod-genetic: #c58a44;
+  --mod-genetic-soft: #f5e9d6;
+  --mod-genetic-text: #7a4e12;
+  --mod-rna: #5e7d95;
+  --mod-rna-soft: #e0e6ea;
+  --mod-rna-text: #3f5c72;
+  --mod-protein: #6f8466;
+  --mod-protein-soft: #e7eae6;
+  --mod-protein-text: #45573e;
+  --gf-success: #4f7a4a;
+  --gf-danger: #b22935;
+  --gf-info: #5e7d95;
+  --surface-page: var(--gf-white);
+  --surface-section: var(--gf-paper-2);
+  --surface-card: var(--gf-white);
+  --text-body: var(--gf-ink);
+  --text-muted: var(--gf-ink-2);
+  --text-faint: var(--gf-ink-3);
+  --border-default: var(--gf-line);
+  --border-strong: var(--gf-ink);
+  --accent: var(--gf-orange);
+  --accent-hover: var(--gf-orange-dark);
+  --accent-soft: #f6e8df;
+  --success-soft: #e5eee3;
+  --info-soft: #e0e6ea;
+  --gold-soft: #fbf1dc;
+  --gold-text: #854208;
+  --focus-ring: 0 0 0 3px rgba(196, 101, 45, 0.3);
+  --ink-wash: rgba(29, 39, 42, 0.06);
+  --grid-line: rgba(29, 39, 42, 0.1);
+  --font-display: "Source Serif 4", "Suisse Works", Georgia, "Times New Roman", serif;
+  --font-body: "Work Sans", "Suisse Intl", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
+  --tracking-caps: 0.08em;
+  --radius-sm: 2px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --nav-h: 64px;
+  --sidebar-w: 272px;
+  /* Legacy aliases still referenced below. */
+  --ink: var(--gf-ink);
+  --muted: var(--gf-ink-2);
+  --border: var(--gf-line);
+  --bg: var(--gf-white);
+  --amber: var(--gold-text);
+}
+
+/* Reviews and coverage. */
+.review-coverage strong, .review-coverage span { display:block; }
+.review-coverage strong { font-family:var(--font-display); font-weight:400; font-size:20px; line-height:1.2; }
+.review-coverage span { color:var(--text-muted); font-size:13px; margin-top:4px; }
+.review-state { background:var(--info-soft); color:var(--gf-slate-3); }
+.hypothesis-review { margin-top:26px; padding-top:20px; border-top:1px solid var(--border-default); }
+.review-origin { color:var(--text-muted); font-size:12px; margin:8px 0; }
+.review-preview { padding:16px; margin:16px 0; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--surface-section); }
+.review-preview strong { color:var(--text-muted); font-size:12px; }
+.review-preview p { margin:8px 0; font-size:13px; line-height:1.6; }
+.review-entry { padding:16px 0; border-bottom:1px solid var(--border-default); }
+.review-entry summary { cursor:pointer; font-size:14px; }
+.review-entry summary small { display:block; margin-top:4px; color:var(--text-muted); }
+.open-hypothesis { margin:15px 0; }
+.reference-link { padding:0; border:0; color:var(--text-body); background:transparent; font:inherit; text-decoration:underline; text-decoration-color:var(--gf-ink-4); text-underline-offset:3px; overflow-wrap:anywhere; text-align:left; transition:color var(--dur-fast) var(--ease); }
+.reference-link:hover { color:var(--accent); text-decoration-color:var(--accent); }
+.review-claim small { overflow-wrap:anywhere; }
+.assay-details { margin:10px 0; font-size:12px; white-space:normal; }
+.assay-details summary { color:var(--text-muted); cursor:pointer; }
+.assay-details dl { display:grid; grid-template-columns:100px minmax(0,1fr); gap:7px 12px; }
+.assay-details dt { color:var(--text-faint); }
+.assay-details dd { margin:0; overflow-wrap:anywhere; }
+.measurement-line { font-variant-numeric:tabular-nums; font-weight:500; }
+.evidence-highlight { background:var(--accent-soft); outline:2px solid var(--accent); outline-offset:-2px; }
+
+* {
+  box-sizing: border-box;
+}
+html {
+  background: var(--surface-page);
+}
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-body);
+  font: 14px/1.5 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+label.import-button {
+  touch-action: manipulation;
+}
+button {
+  cursor: pointer;
+}
+a {
+  color: var(--text-body);
+  text-decoration: underline;
+  text-decoration-color: var(--gf-ink-4);
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease);
+}
+a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+label:focus-visible,
+summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+h3 {
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+/* Site-style header: Goodfire mark, product name, cohort links, outline + filled buttons. */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 32px;
+  background: var(--gf-white);
+  border-bottom: 1px solid var(--border-default);
+}
+.goodfire-home {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.goodfire-home svg {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+.nav-rule {
+  width: 1px;
+  height: 30px;
+  background: var(--gf-ink-4);
+  flex-shrink: 0;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-body);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.brand:hover {
+  color: var(--text-body);
+}
+.brand-name {
+  white-space: nowrap;
+}
+.brand .plus {
+  color: var(--accent);
+}
+.brand small {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
+/* Cohort switcher: segmented control at the top of the sidebar. */
+.cohort-heading {
+  margin-bottom: 8px;
+}
+.cohort-nav {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 14px;
+}
+.cohort-nav a {
+  flex: 1;
+  text-align: center;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 10px;
+  border: 1px solid var(--gf-ink-4);
+  border-radius: var(--radius-md);
+  background: var(--gf-white);
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.cohort-nav a:hover {
+  color: var(--text-body);
+  border-color: var(--gf-ink);
+}
+.cohort-nav a.active {
+  color: var(--gf-white);
+  background: var(--gf-ink);
+  border-color: var(--gf-ink);
+}
+.nav-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1.5px solid var(--gf-ink);
+  border-radius: var(--radius-lg);
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--gf-ink);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.button:hover:not(:disabled) {
+  background: var(--ink-wash);
+}
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.button-primary {
+  background: var(--gf-ink);
+  color: var(--gf-white);
+}
+.button-primary:hover:not(:disabled) {
+  background: #34414a;
+  border-color: #34414a;
+}
+.import-button input {
+  display: none;
+}
+
+/* Frame: light individuals panel + main column. */
+.frame {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  min-height: calc(100vh - var(--nav-h));
+}
+.sidebar {
+  position: sticky;
+  top: var(--nav-h);
+  height: calc(100vh - var(--nav-h));
+  overflow: hidden;
+  background: var(--surface-section);
+  border-right: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px 20px;
+}
+.sidebar-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-body);
+}
+.cohort-card {
+  position: relative;
+  border: 1px solid var(--gf-ink);
+  border-radius: var(--radius-md);
+  background: var(--gf-white);
+  padding: 12px 14px 12px 30px;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+.cohort-card small {
+  display: block;
+  font: 11px var(--font-mono);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.live-dot {
+  position: absolute;
+  left: 13px;
+  top: 18px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-faint);
+  background: var(--gf-white);
+  border: 1px solid var(--gf-ink-4);
+  padding: 7px 10px;
+  border-radius: var(--radius-md);
+  margin-bottom: 22px;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.search-wrap:focus-within {
+  border-color: var(--gf-ink);
+}
+.search-wrap span {
+  font-size: 18px;
+  line-height: 1;
+}
+.search-wrap input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  background: none;
+  color: var(--text-body);
+  font-size: 13px;
+  outline: 0;
+}
+.search-wrap input:focus-visible {
+  box-shadow: none;
+}
+.search-wrap input::placeholder {
+  color: var(--text-faint);
+}
+.patient-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gf-ink);
+  margin-bottom: 4px;
+}
+.patient-heading span {
+  font: 11px var(--font-mono);
+  color: var(--text-muted);
+}
+#patients {
+  overflow: auto;
+  flex: 1;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+#patients button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  color: var(--text-body);
+  text-align: left;
+  border: 1px solid transparent;
+  border-bottom-color: var(--border-default);
+  border-radius: var(--radius-md);
+  width: 100%;
+  padding: 12px 10px;
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+#patients button:hover {
+  background: var(--gf-paper);
+}
+#patients button.selected {
+  background: var(--gf-white);
+  border-color: var(--gf-ink);
+}
+#patients button.selected + button {
+  border-top-color: transparent;
+}
+.patient-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--gf-ink-4);
+  border-radius: 6px;
+  font: 11px var(--font-mono);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+#patients button.selected .patient-icon {
+  border-color: var(--gf-ink);
+  background: var(--gf-ink);
+  color: var(--gf-white);
+}
+.patient-info {
+  flex: 1;
+  min-width: 0;
+}
+.patient-info strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+}
+.patient-info small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.patient-arrow {
+  font-size: 16px;
+  color: var(--gf-ink-4);
+}
+#patients button.selected .patient-arrow {
+  color: var(--accent);
+}
+.sidebar-bottom {
+  border-top: 1px solid var(--border-default);
+  padding: 14px 0 0;
+  margin-top: 14px;
+}
+.sidebar-bottom p {
+  font: 11px/1.7 var(--font-mono);
+  color: var(--text-faint);
+  margin: 0;
+}
+
+/* Main column. */
+main {
+  min-width: 0;
+}
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 32px;
+  align-items: center;
+  padding: 44px 40px 36px;
+  border-bottom: 1px solid var(--border-default);
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 24px 24px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.35) 45%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.35) 45%, #000 100%);
+  z-index: -1;
+}
+.hero-copy {
+  min-width: 0;
+}
+.eyebrow {
+  font-size: 15px;
+  color: var(--text-body);
+  margin-bottom: 14px;
+}
+h1 {
+  font-size: 46px;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 14px;
+}
+.hero-copy p {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0 0 18px;
+  max-width: 640px;
+}
+.research-badge {
+  display: inline-block;
+  border: 1px solid var(--gf-ink);
+  color: var(--text-body);
+  border-radius: var(--radius-pill);
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.hero-figure {
+  position: relative;
+  height: 300px;
+}
+/* The schematic is an 800x500 crop shown at 2 image px per CSS px so it stays sharp on dense displays. */
+.specimen {
+  position: absolute;
+  display: block;
+  border: 1px solid var(--gf-ink);
+  border-radius: var(--radius-md);
+  background-color: var(--gf-paper);
+  background-image: var(--specimen);
+  background-size: 400px auto;
+  background-repeat: no-repeat;
+}
+.specimen-a {
+  right: 0;
+  top: 0;
+  width: 226px;
+  height: 216px;
+  background-position: -174px 0;
+}
+.specimen-b {
+  left: 0;
+  bottom: 0;
+  width: 172px;
+  height: 240px;
+  background-position: -10px -5px;
+}
+.workspace {
+  padding: 32px 40px 48px;
+  max-width: 1480px;
+}
+
+/* Metrics as the site's colored theme cards: gold for genetics, slate for measurements. */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.metric {
+  padding: 18px 20px 16px;
+  min-height: 124px;
+  display: flex;
+  flex-direction: column;
+  color: var(--gf-white);
+  background: var(--gf-ink);
+  border-radius: var(--radius-lg);
+  min-width: 0;
+}
+.metric[data-modality="genetic"] {
+  color: var(--gf-ink);
+  background: var(--mod-genetic);
+}
+.metric[data-modality="rna"] {
+  background: var(--mod-rna);
+}
+.metric[data-modality="protein"] {
+  background: var(--mod-protein);
+}
+.metric-label {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.metric-value {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  font-family: var(--font-display);
+  font-size: 44px;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  line-height: 1;
+  margin: 14px 0 8px;
+}
+.metric-value small {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0;
+  font-weight: 400;
+  opacity: 0.85;
+}
+.metric-sub {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid currentColor;
+}
+.workflow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 19px 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 10px 17px;
+  background: var(--surface-section);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.workflow b {
+  font: 11px var(--font-mono);
+  margin-right: 8px;
+  color: var(--text-faint);
+}
+.workflow i {
+  font-style: normal;
+  color: var(--gf-ink-4);
+}
+.cohort-note {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 20px;
+  max-width: 900px;
+}
+.cohort-note strong {
+  color: var(--text-body);
+  font-weight: 500;
+}
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--gf-ink-4);
+  gap: 28px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tabs button {
+  background: none;
+  border: 0;
+  white-space: nowrap;
+  padding: 10px 0 12px;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+  position: relative;
+  transition: color var(--dur-fast) var(--ease);
+}
+.tabs button:hover {
+  color: var(--text-body);
+}
+.tabs button.active {
+  color: var(--text-body);
+}
+.tabs button.active:after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gf-ink);
+}
+.tabs button span {
+  font: 11px var(--font-mono);
+  background: var(--gf-paper);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  margin-left: 6px;
+  color: var(--text-muted);
+}
+
+/* Panels: rounded, hairline-framed cards. */
+.hypothesis-grid {
+  display: grid;
+  grid-template-columns: minmax(330px, 1.03fr) minmax(390px, 1.2fr);
+  gap: 20px;
+  align-items: start;
+}
+.panel {
+  background: var(--surface-card);
+  border: 1px solid var(--gf-ink-4);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.panel-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--gf-ink-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-section);
+}
+.panel-head h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.panel-head small {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: right;
+}
+.filters {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-default);
+  align-items: center;
+}
+.filters input[type="search"] {
+  width: 100%;
+  min-width: 60px;
+  border: 1px solid var(--gf-ink-4);
+  border-radius: var(--radius-md);
+  padding: 7px 10px;
+  font-size: 13px;
+  color: var(--text-body);
+  background: var(--gf-white);
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.filters input[type="search"]:focus-visible {
+  border-color: var(--gf-ink);
+}
+.filters label {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.filters input[type="checkbox"] {
+  accent-color: var(--gf-ink);
+  vertical-align: middle;
+}
+.rank-list {
+  max-height: 660px;
+  overflow: auto;
+}
+.rank-row {
+  background: var(--surface-card);
+  display: block;
+  width: 100%;
+  border: 0;
+  text-align: left;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border-default);
+  position: relative;
+  color: inherit;
+  transition: background var(--dur-fast) var(--ease);
+}
+.rank-row:hover {
+  background: var(--gf-paper-2);
+}
+.rank-row.selected {
+  background: var(--gf-paper);
+}
+.rank-row.selected:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+}
+.rank-top {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.rank-number {
+  font: 11px var(--font-mono);
+  color: var(--text-faint);
+  min-width: 18px;
+}
+.gene {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.variant-id {
+  font: 11px var(--font-mono);
+  color: var(--text-faint);
+  overflow-wrap: anywhere;
+}
+.rank-score {
+  margin-left: auto;
+  text-align: right;
+  font: 18px var(--font-mono);
+  color: var(--text-body);
+}
+.rank-score small {
+  display: block;
+  font: 10px var(--font-mono);
+  color: var(--text-faint);
+}
+.rank-row p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 7px 0 9px 27px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-left: 27px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font: 11px var(--font-mono);
+  line-height: 1.4;
+  border-radius: var(--radius-pill);
+  padding: 3px 9px;
+  background: var(--gf-paper);
+  color: var(--text-muted);
+}
+.chip.supports {
+  background: var(--success-soft);
+  color: var(--gf-success);
+}
+.chip.contradicts {
+  background: var(--accent-soft);
+  color: var(--gf-orange-dark);
+}
+.chip.unknown,
+.chip.context {
+  background: var(--gf-paper);
+  color: var(--text-faint);
+}
+.detail-body {
+  padding: 22px;
+}
+.detail-eyebrow {
+  font: 11px var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.detail-title {
+  font-size: 30px;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 8px 0;
+}
+.detail-variant {
+  font: 12px var(--font-mono);
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+.section-label {
+  font: 11px var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin: 24px 0 10px;
+}
+.expected {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.expected span {
+  font-size: 12px;
+  border: 1px solid var(--gf-ink-4);
+  border-radius: var(--radius-pill);
+  padding: 5px 12px;
+  color: var(--text-body);
+  background: var(--gf-white);
+}
+.body-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.score-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 9px 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.score-line > span:first-child {
+  width: 82px;
+}
+.score-track {
+  height: 4px;
+  background: var(--gf-line);
+  flex: 1;
+  overflow: hidden;
+}
+.score-track div {
+  height: 100%;
+  background: var(--gf-ink);
+}
+.score-track div.negative {
+  background: var(--gf-orange);
+}
+.score-line strong {
+  min-width: 37px;
+  text-align: right;
+  font: 12px var(--font-mono);
+  font-weight: 400;
+}
+.evidence-card {
+  border-top: 1px solid var(--border-default);
+  padding: 12px 0;
+}
+.evidence-card:first-child {
+  border-top: 0;
+}
+.evidence-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+.evidence-card-head strong {
+  font-weight: 500;
+}
+.evidence-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 6px 0;
+}
+.evidence-card small {
+  font: 11px var(--font-mono);
+  color: var(--text-faint);
+}
+.limitation {
+  border-left: 2px solid var(--gf-gold-2);
+  background: var(--gold-soft);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 10px 13px;
+  font-size: 12px;
+  color: var(--gold-text);
+  margin-top: 10px;
+}
+.empty {
+  padding: 32px 22px;
+  color: var(--text-faint);
+  font-size: 14px;
+  text-align: center;
+}
+.note-list {
+  padding-left: 17px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table th {
+  text-align: left;
+  font: 11px var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 400;
+  background: var(--surface-section);
+}
+.data-table td,
+.data-table th {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-default);
+}
+.data-table td {
+  color: var(--text-muted);
+}
+.data-table td strong {
+  font-weight: 500;
+  color: var(--text-body);
+}
+.table-scroll {
+  overflow: auto;
+}
+.table-foot {
+  font-size: 12px;
+  color: var(--text-faint);
+  padding: 12px 16px;
+}
+.article {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-default);
+}
+.article h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+.article a {
+  text-decoration: none;
+}
+.article a:hover {
+  text-decoration: underline;
+}
+.article p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 5px 0;
+}
+.article small {
+  font: 11px var(--font-mono);
+  color: var(--text-faint);
+}
+.article .citation-scope {
+  color: var(--text-faint);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.article .citation-scope .scope-label {
+  font: 11px var(--font-mono);
+  color: var(--text-faint);
+  margin-right: 2px;
+}
+.review-summary {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-body);
+}
+.review-claim {
+  font-size: 13px;
+  line-height: 1.7;
+  border-bottom: 1px solid var(--border-default);
+  padding: 10px 0;
+}
+.review-claim em {
+  font: 11px var(--font-mono);
+  color: var(--text-faint);
+  font-style: normal;
+  margin-right: 6px;
+}
+.review-claim small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-faint);
+}
+.report-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  line-height: 1.8;
+  max-width: 76ch;
+}
+.provenance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+pre {
+  font: 11px/1.7 var(--font-mono);
+  color: var(--text-body);
+  background: var(--surface-section);
+  border: 1px solid var(--border-default);
+  overflow: auto;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  max-height: 390px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Warm-grey site footer. */
+.site-footer {
+  background: var(--gf-footer);
+  color: var(--gf-white);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 40px;
+  align-items: center;
+  padding: 36px 40px;
+}
+.footer-logo {
+  display: inline-flex;
+  color: var(--gf-white);
+  text-decoration: none;
+}
+.footer-logo svg {
+  height: 20px;
+  width: auto;
+  display: block;
+}
+.site-footer p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 720px;
+}
+.site-footer p a {
+  color: var(--gf-white);
+  text-decoration-color: rgba(255, 255, 255, 0.5);
+}
+.site-footer p a:hover {
+  color: var(--gf-white);
+  text-decoration-color: var(--gf-white);
+}
+.footer-links {
+  display: flex;
+  gap: 22px;
+}
+.footer-links a {
+  font: 11px var(--font-mono);
+  color: var(--gf-white);
+  text-decoration: none;
+  opacity: 0.9;
+}
+.footer-links a:hover {
+  color: var(--gf-white);
+  opacity: 1;
+  text-decoration: underline;
+}
+#error {
+  margin: 20px 40px 0;
+  padding: 14px 16px;
+  background: var(--accent-soft);
+  color: var(--gf-orange-dark);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+details {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 13px 0;
+}
+summary {
+  cursor: pointer;
+}
+.muted {
+  color: var(--text-faint);
+}
+.mono {
+  font-family: var(--font-mono);
+}
+.text-button {
+  background: none;
+  border: 0;
+  color: var(--text-body);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0;
+  text-decoration: none;
+}
+.text-button:hover {
+  color: var(--accent);
+}
+.count-pill {
+  font: 11px var(--font-mono);
+  color: var(--text-faint);
+}
+.detail-subtitle {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-top: -2px;
+}
+.tag-strip {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+@media (min-width: 1600px) {
+  .hypothesis-grid {
+    grid-template-columns: 1fr 1.25fr;
+  }
+  .detail-body {
+    padding: 26px;
+  }
+}
+@media (max-width: 1150px) {
+  :root {
+    --sidebar-w: 236px;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 40px 28px 32px;
+  }
+  .hero-figure {
+    display: none;
+  }
+  .workspace {
+    padding: 28px;
+  }
+  .hypothesis-grid {
+    grid-template-columns: 1fr;
+  }
+  .rank-list {
+    max-height: 380px;
+  }
+  .tabs {
+    flex-wrap: wrap;
+    overflow: visible;
+    gap: 0 20px;
+  }
+  .provenance-grid {
+    grid-template-columns: 1fr;
+  }
+  .site-footer {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+@media (max-width: 900px) {
+  .frame {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-default);
+    padding: 14px 16px;
+  }
+  .cohort-card,
+  .sidebar-bottom,
+  .search-wrap,
+  .patient-heading,
+  .cohort-heading {
+    display: none;
+  }
+  .cohort-nav {
+    margin: 0 0 10px;
+  }
+  .cohort-nav a {
+    flex: 0 0 auto;
+    min-width: 88px;
+  }
+  #patients {
+    display: flex;
+    overflow: auto;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+  }
+  #patients button {
+    width: auto;
+    min-width: 120px;
+    flex-shrink: 0;
+    border: 1px solid var(--gf-ink-4);
+    border-radius: var(--radius-md);
+    padding: 8px 10px;
+  }
+  #patients button.selected {
+    border-color: var(--gf-ink);
+  }
+  .patient-info small,
+  .patient-arrow {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .site-nav {
+    height: auto;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding: 12px 16px;
+  }
+  .brand small,
+  .nav-rule {
+    display: none;
+  }
+  .nav-actions {
+    width: 100%;
+    order: 4;
+  }
+  .nav-actions .button {
+    flex: 1;
+    justify-content: center;
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+  .hero {
+    padding: 28px 16px 24px;
+  }
+  h1 {
+    font-size: 32px;
+  }
+  .hero-copy p {
+    font-size: 15px;
+  }
+  .workspace {
+    padding: 20px 16px 32px;
+  }
+  #error {
+    margin: 16px;
+  }
+  .metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .metric {
+    min-height: 0;
+    padding: 14px 14px 12px;
+  }
+  .metric-value {
+    font-size: 32px;
+    margin: 8px 0 6px;
+  }
+  .metric-sub {
+    overflow-wrap: anywhere;
+  }
+  .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 18px;
+  }
+  .tabs button {
+    font-size: 14px;
+  }
+  .hypothesis-grid {
+    display: block;
+  }
+  .hypothesis-grid > .panel {
+    margin-bottom: 16px;
+  }
+  .table-scroll {
+    max-width: 100%;
+  }
+  .detail-body {
+    padding: 18px;
+  }
+  .site-footer {
+    padding: 28px 16px;
+  }
+  .footer-links {
+    flex-wrap: wrap;
+    gap: 12px 18px;
+  }
+}
+
+/* Candidate exploration and auditable signed scoring. */
+.panel, #detail, .hypothesis-grid > *, .metric { min-width: 0; }
+.filters select { min-width: 0; width: 100%; padding: 7px 10px; font: inherit; font-size: 13px; color: var(--text-body); border: 1px solid var(--gf-ink-4); border-radius: var(--radius-md); background: var(--gf-white); }
+.filters select:focus-visible { border-color: var(--gf-ink); }
+.rank-row > .variant-id { margin-left: 27px; }
+.rank-row .gene { overflow-wrap: anywhere; }
+.rank-score { white-space: nowrap; }
+.negative, .rank-score.negative, .data-table .negative { color: var(--gf-orange-dark); }
+.supports-text, .data-table .supports-text { color: var(--gf-success); }
+.chip.simulated { color: var(--gf-slate-3); background: var(--info-soft); }
+.pagination { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-top: 1px solid var(--border-default); font-size: 12px; color: var(--text-muted); }
+.pagination .button { padding: 5px 12px; font-size: 13px; }
+.button:disabled { cursor: not-allowed; opacity: .4; }
+.score-summary { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.score-summary strong { font-family: var(--font-display); font-size: 24px; font-weight: 400; }
+.score-summary span { font-size: 12px; color: var(--text-muted); }
+.score-table th, .score-table td { padding: 10px 8px; font-size: 12px; vertical-align: top; }
+.score-table tbody th { background: transparent; color: var(--text-body); font: 12px var(--font-body); text-transform: none; letter-spacing: 0; }
+.score-table tbody th small { color: var(--text-faint); font-weight: 400; font-size: 11px; }
+.score-table td { min-width: 43px; }
+.score-table td:last-child { min-width: 112px; }
+.category-reasons { margin: 4px 0 0; font-size: 11px; }
+.category-reasons .note-list { font-size: 12px; margin: 6px 0; padding-left: 12px; }
+.category-reasons .mono { font-size: 10px; overflow-wrap: anywhere; }
+.score-method { font-size: 12px; }
+.block { display: block; }
+.scenario-profile { border: 1px solid var(--gf-slate-1); border-radius: var(--radius-md); padding: 14px; margin-top: 18px; background: var(--info-soft); overflow: hidden; }
+.scenario-profile > .section-label { margin: 0 0 8px; color: var(--gf-slate-3); }
+.scenario-profile > strong { font-size: 13px; }
+.scenario-profile > .mono { display: block; overflow-wrap: anywhere; font-size: 11px; color: var(--gf-slate-3); }
+.profile-head-label { font: 11px var(--font-mono); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--gf-slate-3); margin-bottom: 6px; }
+.annotation-table td, .annotation-table th { padding: 8px; font-size: 11px; }
+.annotation-table td:first-child { overflow-wrap: anywhere; min-width: 140px; }
+.annotation-table td small { font-size: 10px; color: var(--text-faint); }
+.annotation-table { min-width: 370px; }
+@media (max-width: 700px) {
+  .research-badge { white-space: normal; }
+  .score-summary span { font-size: 11px; }
+  .scenario-profile { padding: 10px; }
+}
+
+.gene-mechanism {display:block; width:100%; text-align:left; margin:8px 0; white-space:normal;}
+
+.variant-evee-card {border:1px solid var(--gf-ink-4); border-radius:var(--radius-md); background:var(--gf-white); padding:16px; margin:12px 0; overflow-wrap:anywhere;}
+.variant-evee-heading {display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;}
+.evee-value {font-family:var(--font-display); font-size:26px; color:var(--text-body); text-align:right; flex-shrink:0;}
+.evee-value small {display:block; font:10px var(--font-mono); letter-spacing:var(--tracking-caps); text-transform:uppercase; color:var(--text-faint);}
+.evee-score {background:var(--info-soft); color:var(--gf-slate-3);}
+
+.genetic-components {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0;}
+.genetic-components > div {padding:16px;background:var(--surface-section);border:1px solid var(--border-default);border-radius:var(--radius-md);overflow-wrap:anywhere;}
+.genetic-score-parts {display:grid;gap:4px;margin:6px 0;color:var(--text-muted);font-size:12px;}
+@media(max-width:650px){.genetic-components {grid-template-columns:1fr;}}
+
+/* Findings first: compact navigation, cited interpretation, optional audit. */
+.gene-layout { grid-template-columns: minmax(225px, .65fr) minmax(0, 1.6fr); align-items:start; }
+.gene-title { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:14px; }
+.gene-title h2 { margin:0; font-size:40px; letter-spacing:-0.02em; }
+.gene-title > div > strong { font-family:var(--font-display); font-size:36px; font-weight:400; color:var(--accent); }
+.gene-title > div > small { color:var(--text-faint); font-size:13px; }
+.finding { display:grid; grid-template-columns:84px minmax(0,1fr) 66px; gap:10px; padding:12px 0; border-bottom:1px solid var(--border-default); font-size:14px; line-height:1.6; }
+.finding > strong { font-size:13px; font-weight:500; color:var(--text-body); padding-top:1px; }
+.finding-points { text-align:right; color:var(--text-body); font-family:var(--font-mono); font-size:13px; white-space:nowrap; }
+.mapping-flag { display:block; color:var(--gold-text); font-size:12px; }
+.review-takeaway { margin:22px 0; }
+.review-takeaway p { margin:6px 0; line-height:1.65; font-size:15px; }
+.gene-literature h3 { font-family:var(--font-display); font-weight:400; font-size:22px; margin:24px 0 12px; }
+.cited-finding { border-left:2px solid var(--gf-gold-2); padding:0 0 0 14px; margin:18px 0 22px; }
+.cited-finding p { font-size:14px; line-height:1.6; margin:6px 0 9px; }
+.finding-label { font:11px var(--font-mono); text-transform:uppercase; letter-spacing:var(--tracking-caps); color:var(--text-faint); }
+.paper-link { font-size:13px; line-height:1.5; margin:5px 0; }
+.paper-link a { color:var(--text-body); }
+.gene-overview > details { border-top:1px solid var(--border-default); padding:13px 0; margin:0; }
+.gene-overview summary { font-size:14px; font-weight:500; cursor:pointer; color:var(--text-body); }
+.gene-overview summary:hover { color:var(--accent); }
+.review-age { color:var(--gold-text); font-size:12px; }
+.review-coverage span:empty, .cohort-note:empty, .metric-sub:empty { display:none; }
+[hidden] { display:none !important; }
+@media(max-width:900px) { .gene-layout { grid-template-columns:1fr; } }
+@media(max-width:600px) { .finding { grid-template-columns:70px minmax(0,1fr); } .finding-points { grid-column:2; text-align:left; } }
+
+.review-takeaway h3 {font-family:var(--font-display); font-weight:400; font-size:22px; margin:0 0 8px;}
+.summary-citations {font-size:13px; line-height:1.6; margin-top:8px; color:var(--text-muted);}
+.summary-citations a {color:var(--text-body);}
+.visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+/* Modality colour: DNA gold, RNA slate, protein sage. */
+[data-modality] .mod-dot,
+.finding[data-modality] > strong::before,
+.evidence-card[data-modality] .evidence-card-head strong::before,
+.data-table tr[data-modality] td:nth-child(2)::before,
+.score-table tr[data-category] th::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: 1px;
+  background: var(--gf-ink-4);
+}
+.finding[data-modality="genetic"] > strong::before,
+.evidence-card[data-modality="genetic"] .evidence-card-head strong::before,
+.score-table tr[data-category="genetic"] th::before,
+.score-table tr[data-category="genetics"] th::before,
+.score-table tr[data-category="evee"] th::before { background: var(--mod-genetic); }
+.finding[data-modality="rna"] > strong::before,
+.evidence-card[data-modality="rna"] .evidence-card-head strong::before,
+.data-table tr[data-modality="rna"] td:nth-child(2)::before,
+.score-table tr[data-category="rna"] th::before { background: var(--mod-rna); }
+.finding[data-modality="protein"] > strong::before,
+.evidence-card[data-modality="protein"] .evidence-card-head strong::before,
+.data-table tr[data-modality="protein"] td:nth-child(2)::before,
+.score-table tr[data-category="protein"] th::before { background: var(--mod-protein); }
+.finding[data-modality="genetic"] > strong { color: var(--mod-genetic-text); }
+.finding[data-modality="rna"] > strong { color: var(--mod-rna-text); }
+.finding[data-modality="protein"] > strong { color: var(--mod-protein-text); }
+.finding[data-modality="genetic"] .finding-points { color: var(--mod-genetic-text); }
+.finding[data-modality="rna"] .finding-points { color: var(--mod-rna-text); }
+.finding[data-modality="protein"] .finding-points { color: var(--mod-protein-text); }
+.evidence-card[data-modality="rna"] .evidence-card-head strong { color: var(--mod-rna-text); }
+.evidence-card[data-modality="protein"] .evidence-card-head strong { color: var(--mod-protein-text); }
+.data-table tr[data-modality="rna"] td:nth-child(2) { color: var(--mod-rna-text); font-weight: 500; }
+.data-table tr[data-modality="protein"] td:nth-child(2) { color: var(--mod-protein-text); font-weight: 500; }
+
+/* Gene list: sticky beside the evidence summary on desktop, with its own scroll. */
+.gene-list { max-height: none; overflow: visible; }
+@media (min-width: 901px) {
+  .gene-layout > .panel:first-child {
+    position: sticky;
+    top: calc(var(--nav-h) + 16px);
+    max-height: calc(100vh - var(--nav-h) - 32px);
+    display: flex;
+    flex-direction: column;
+  }
+  .gene-layout > .panel:first-child .panel-head { flex-shrink: 0; }
+  .gene-layout .gene-list { flex: 1 1 auto; min-height: 0; overflow: auto; overscroll-behavior: contain; }
+}
+.gene-layout > .panel { scroll-margin-top: calc(var(--nav-h) + 12px); }
+
+/* Coverage strip: DNA, RNA, protein dots plus the review status on one line. */
+.rank-meta { display: flex; align-items: center; gap: 10px; margin-left: 27px; margin-top: 2px; min-width: 0; }
+/* Gene rows: name and score on one line, coverage dots, contributors and review state on the next. */
+.gene-list .rank-row { padding: 12px 16px 12px 18px; }
+.gene-row .rank-top { align-items: baseline; gap: 12px; }
+.gene-name { font-family: var(--font-display); font-size: 19px; font-weight: 400; letter-spacing: -0.01em; line-height: 1.2; overflow-wrap: anywhere; }
+.gene-row .rank-score { font-size: 15px; line-height: 1.2; }
+.gene-row .rank-score small { display: inline; margin-left: 3px; font-size: 10px; }
+.gene-row .rank-meta { margin: 7px 0 0; gap: 8px; }
+.rank-contrib { flex: 1 1 auto; min-width: 0; font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gene-row .review-mark { margin-left: 0; flex-shrink: 0; }
+.panel-foot { display: flex; justify-content: flex-end; align-items: center; padding: 8px 16px; border-top: 1px solid var(--border-default); background: var(--surface-section); }
+.gene-layout > .panel:first-child .panel-foot { flex-shrink: 0; }
+.coverage { display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.cov-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gf-ink-4);
+  background: transparent;
+  box-sizing: border-box;
+}
+.cov-dot.on[data-modality="genetic"] { background: var(--mod-genetic); border-color: var(--mod-genetic); }
+.cov-dot.on[data-modality="rna"] { background: var(--mod-rna); border-color: var(--mod-rna); }
+.cov-dot.on[data-modality="protein"] { background: var(--mod-protein); border-color: var(--mod-protein); }
+.review-mark { margin-left: auto; font-size: 11px; line-height: 1.4; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.review-mark::before { content: "✓"; margin-right: 4px; }
+.review-mark[data-state="reviewed"] { color: var(--gf-success); }
+.review-mark[data-state="outdated"] { color: var(--gold-text); }
+.review-mark[data-state="outdated"]::before { content: "↻"; }
+.review-mark[data-state="none"] { color: var(--text-faint); }
+.review-mark[data-state="none"]::before { content: "○"; }
+
+/* Finding rows: points out of the category maximum, with a thin share bar under the label. */
+.finding-bar { display: block; height: 3px; max-width: 64px; margin-top: 6px; border-radius: 2px; background: var(--border-default); overflow: hidden; }
+.finding-bar > span { display: block; height: 100%; border-radius: 2px; background: var(--gf-ink-4); }
+.finding[data-modality="genetic"] .finding-bar > span { background: var(--mod-genetic); }
+.finding[data-modality="rna"] .finding-bar > span { background: var(--mod-rna); }
+.finding[data-modality="protein"] .finding-bar > span { background: var(--mod-protein); }
+
+/* Coverage legend in the Genes panel header: the same three dots as each row. */
+.legend-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; min-width: 0; }
+.cov-legend { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 2px 6px; font-size: 11px; color: var(--text-muted); }
+.cov-legend > span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.cov-legend .legend-sep { color: var(--text-faint); }
+.legend-count { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+/* Literature library filters: search, gene and "referenced only" on one wrapping row. */
+.lit-filters { flex-wrap: wrap; gap: 8px 12px; }
+.lit-filters input[type="search"] { flex: 1 1 200px; width: auto; }
+.lit-filters select { width: auto; flex: 0 1 150px; }
+.lit-gene-wrap { display: inline-flex; align-items: center; gap: 8px; flex: 0 1 auto; }
+.lit-filters label.check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.lit-note { padding: 8px 16px; border-bottom: 1px solid var(--border-default); font: 11px/1.5 var(--font-mono); color: var(--text-faint); }
+
+/* Clinical context: phenotype observations as chips; absent terms are muted. */
+.phenotype-chips { margin: 10px 0 4px; gap: 6px; }
+.chip.phenotype { font-family: var(--font-body); font-size: 12px; color: var(--text-body); background: var(--gf-paper); border: 1px solid var(--border-default); padding: 4px 10px; gap: 6px; }
+.chip.phenotype .chip-id { font: 10px var(--font-mono); color: var(--text-faint); }
+.chip.phenotype .chip-state { font: 10px var(--font-mono); color: var(--text-faint); }
+.chip.phenotype.absent { color: var(--text-faint); background: transparent; border-style: dashed; }
+.hpo-caveat { font-size: 12px; margin: 8px 0 0; }
+.gene-overview > .gene-findings { margin-top: 4px; }
+
+/* Patient context bar: review coverage, collapsible clinical and provenance sections, and the literature drawer button. */
+.patient-context { margin: 0 0 20px; background: var(--surface-section); border: 1px solid var(--border-default); border-radius: var(--radius-lg); }
+.context-bar { display: flex; gap: 16px 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 14px 20px; }
+.context-actions { display: flex; align-items: center; gap: 4px 6px; flex-wrap: wrap; }
+.context-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.context-toggle::after { content: ""; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform var(--dur-fast) var(--ease); }
+.context-toggle:hover { color: var(--text-body); background: var(--ink-wash); }
+.context-toggle[aria-expanded="true"] { color: var(--gf-ink); border-color: var(--gf-ink-4); background: var(--gf-white); }
+.context-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(225deg); }
+.context-actions .button { margin-left: 8px; }
+.context-section { border-top: 1px solid var(--border-default); scroll-margin-top: calc(var(--nav-h) + 12px); }
+.context-section-head { display: flex; align-items: baseline; gap: 12px; padding: 16px 20px 0; }
+.context-section-head h2 { font-size: 22px; margin: 0; }
+.context-section-head small { font-size: 12px; color: var(--text-muted); }
+.context-close { margin-left: auto; padding: 0; border: 0; background: none; font: 500 12px var(--font-body); color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.context-close:hover { color: var(--accent); }
+.context-body { padding: 16px 20px 22px; }
+.context-body .section-label:first-child { margin-top: 0; }
+.context-block { min-width: 0; }
+.context-block h3 { font-family: var(--font-display); font-weight: 400; font-size: 17px; margin: 0 0 8px; }
+.context-block pre { max-height: 360px; }
+.provenance-grid { gap: 24px; }
+
+/* Literature drawer: full height under the header on the right, with a scrim below the wide layout. */
+.drawer-scrim { position: fixed; inset: var(--nav-h) 0 0; z-index: 29; background: rgba(29, 39, 42, 0.38); }
+.drawer {
+  position: fixed;
+  top: var(--nav-h);
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  width: min(480px, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-card);
+  border-left: 1px solid var(--gf-ink-4);
+  box-shadow: -12px 0 32px rgba(29, 39, 42, 0.12);
+  animation: drawer-in var(--dur) var(--ease);
+}
+@keyframes drawer-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--gf-ink-4); background: var(--surface-section); flex-shrink: 0; }
+.drawer-head h2 { font-size: 22px; margin: 0; }
+.drawer-head small { display: block; margin-top: 2px; font-size: 12px; color: var(--text-muted); }
+.drawer-close { width: 34px; height: 34px; flex-shrink: 0; border: 1.5px solid transparent; border-radius: var(--radius-lg); background: transparent; color: var(--text-muted); font-size: 22px; line-height: 1; cursor: pointer; transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+.drawer-close:hover { color: var(--gf-ink); background: var(--ink-wash); }
+.drawer-body { flex: 1 1 auto; min-height: 0; overflow: auto; overscroll-behavior: contain; }
+.drawer .lit-filters { position: sticky; top: 0; z-index: 1; background: var(--surface-card); }
+.drawer .article { outline: none; transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.drawer .article.citation-target { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+@media (min-width: 1150px) { .drawer-scrim { display: none !important; } }
+@media (max-width: 700px) {
+  .drawer, .drawer-scrim { top: 0; }
+  .drawer { width: 100vw; border-left: 0; }
+  body.drawer-open { overflow: hidden; }
+  .context-bar { padding: 12px 16px; }
+  .context-actions { width: 100%; }
+  .context-actions .button { margin-left: auto; }
+  .context-section-head, .context-body { padding-left: 16px; padding-right: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .drawer { animation: none; } }
+
+/* Other reviewed mechanisms, listed inside the Mechanisms detail. */
+.review-index { margin-top: 20px; border-top: 1px solid var(--border-default); padding-top: 14px; }
+.review-index > summary { font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-body); }
+.review-index > summary:hover { color: var(--accent); }
+.review-index .review-entry:last-child { border-bottom: 0; }
+
+body{margin:0;background:#f9faf5;color:#1d272a;font-family:var(--font-body)}
+.mock-header{padding:20px 28px;background:white;border-bottom:1px solid #b4b4b4;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.mock-header strong{font:28px Georgia,serif}.mock-header a{margin-left:auto}.mock-shell{max-width:1300px;margin:auto;padding:28px}
+.mock-notice{padding:16px;background:#fbf1dc;border-left:4px solid #c4652d;margin-bottom:24px}.mock-notice p{margin:8px 0 0}
+.mock-controls{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:20px 0}.mock-controls select,.mock-controls button{max-width:100%;min-width:0;padding:10px;background:white;border:1px solid #1d272a;border-radius:6px;font:inherit}
+.mock-grid{display:grid;grid-template-columns:270px minmax(0,1fr);gap:20px}.mock-card{background:white;border:1px solid #b4b4b4;border-radius:8px;padding:22px;min-width:0}
+.mock-candidates button{display:block;width:100%;text-align:left;margin-bottom:12px;padding:16px;border:1px solid #b4b4b4;background:white;border-radius:6px;font:inherit}.mock-candidates button[aria-pressed=true]{border:2px solid #c4652d;background:#f6e8df}.mock-candidates small{display:block;margin-top:8px}
+.mock-title{display:flex;justify-content:space-between;gap:20px;align-items:center}.mock-title h2{font:30px Georgia,serif}.mock-total{font-size:27px;white-space:nowrap;color:#854208}
+.mock-score-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}.mock-score{padding:12px;background:#f6f5f0;border-radius:6px}.mock-score strong{display:block;margin-top:8px}.mock-bar{height:5px;background:#e7eae6;margin-top:10px}.mock-bar span{display:block;height:100%;background:#c4652d}
+.mock-table-wrap{overflow-x:auto}.mock-table{width:100%;border-collapse:collapse;font-size:14px}.mock-table th,.mock-table td{padding:12px 8px;text-align:left;border-bottom:1px solid #e7eae6;vertical-align:top}.mock-table th{color:#646464}.mock-table td:last-child{max-width:340px}.mock-table summary{cursor:pointer}.mock-table pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px var(--font-mono)}
+.mock-tag{font-size:12px;white-space:nowrap}.mock-tag[data-status=fail]{color:#b22935}.mock-tag[data-status=missing],.mock-tag[data-status=below_lod]{color:#854208}.mock-table tr:target{background:#fbf1dc}.mock-links a{display:inline-block;margin:5px 12px 5px 0;font-size:13px}
+@media(max-width:700px){.mock-shell{padding:14px}.mock-grid{grid-template-columns:1fr}.mock-score-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mock-card{padding:14px}.mock-title{align-items:flex-start}.mock-header{padding:16px}.mock-title h2{font-size:24px}}
+</style></head><body>
+<header class="mock-header"><strong>EVEE<span style="color:#c4652d">+</span></strong><span>Multimodal UI sandbox</span><a href="index.html">Public research demo ↗</a></header>
+<main class="mock-shell">
+<aside class="mock-notice"><strong>Synthetic fixture · not participant data</strong><p id="notice"></p></aside>
+<div class="mock-controls"><label for="case">Fictional case</label><select id="case"></select><button id="download">Download mock JSON</button></div>
+<div class="mock-grid"><aside class="mock-card"><h2>Hypotheses</h2><div id="candidates" class="mock-candidates"></div></aside><section class="mock-card" id="hypothesis"></section></div>
+<section class="mock-card" style="margin-top:20px"><h2>Assay records</h2><div class="mock-controls"><label for="modality">Modality</label><select id="modality"></select><span id="count" aria-live="polite"></span></div><div class="mock-table-wrap"><table class="mock-table"><thead><tr><th>Target</th><th>Modality</th><th>Observation</th><th>QC / availability</th><th>Assay details</th></tr></thead><tbody id="records"></tbody></table></div></section>
+</main>
+<script id="mock-data" type="application/json">{"schema_version": "mock-multimodal-v3-preview-1", "synthetic": true, "title": "Multimodal UI sandbox", "notice": "Entirely fictional cases, genes, coordinates, measurements and scores. No participant data, real EVEE results, literature retrieval or agent review. Reference limits are invented UI examples, not clinical thresholds.", "category_maxima": {"genetic": 20, "rna": 25, "protein": 20, "exposure": 10, "phenotype": 20, "literature": 5}, "score_note": "Illustrative v3 totals for layout testing, assigned by hand. Production scoring has not been recalibrated by this fixture.", "patients": [{"id": "MOCK-A", "label": "Concordant molecular findings", "records": [{"id": "A-DNA1", "modality": "genetic", "target": "MOCK1", "result": "SNV \u00b7 heterozygous \u00b7 splice-donor candidate", "status": "pass", "synthetic": true, "details": {"platform": "Oxford Nanopore", "variant": "chr1:100001 G\u003eA", "reference_status": "Invented coordinate; not reference-validated", "depth": 42, "alternate_reads": 21, "genotype": "0/1", "phase_set": "MOCK-PS1", "haplotype": 1, "consequence": "splice_donor_variant", "mock_evee_pathogenicity": 0.93, "mock_annotation": {"splice_donor": {"reference": 0.95, "alternate": 0.08}}, "prediction_status": "Illustrative values, not EVEE inference"}}, {"id": "A-DNA2", "modality": "genetic", "target": "MOCK1", "result": "1-bp deletion \u00b7 heterozygous \u00b7 mock phase in trans", "status": "pass", "synthetic": true, "details": {"platform": "Oxford Nanopore", "variant": "chr1:100071 AT\u003eA", "reference_status": "Invented coordinate; not reference-validated", "depth": 38, "alternate_reads": 18, "genotype": "0/1", "phase_set": "MOCK-PS1", "haplotype": 2, "consequence": "frameshift_variant", "inheritance": "Family genotypes unavailable"}}, {"id": "A-RNA1", "modality": "rna", "target": "MOCK1", "result": "Expression decreased \u00b7 log\u2082 fold change \u22121.6", "status": "pass", "synthetic": true, "details": {"platform": "PacBio", "specimen": "cultured fibroblasts", "kind": "gene_abundance", "patient_counts": 44, "reference_median_counts": 132, "log2_fold_change": -1.6, "z_score": -3.1, "reference_samples": 24}}, {"id": "A-RNA2", "modality": "rna", "target": "MOCK1", "result": "Exon skipping \u00b7 58% versus 3% reference", "status": "pass", "synthetic": true, "details": {"platform": "PacBio", "specimen": "cultured fibroblasts", "kind": "splicing", "transcript": "MOCK1-ISO2", "skipped_exon": "exon 4", "supporting_reads": 29, "informative_reads": 50, "patient_fraction": 0.58, "reference_fraction": 0.03, "reference_samples": 24, "variant_link": "A-DNA1"}}, {"id": "A-RNA3", "modality": "rna", "target": "MOCK1", "result": "Allelic imbalance \u00b7 18:62 reads", "status": "pass", "synthetic": true, "details": {"platform": "PacBio", "kind": "allele_specific_expression", "haplotype_1_reads": 18, "haplotype_2_reads": 62, "mapping_bias_check": "pass", "variant_link": "A-DNA1"}}, {"id": "A-PROT1", "modality": "protein", "target": "MOCK1", "result": "Olink decrease \u00b7 \u0394NPX \u22121.4", "status": "pass", "synthetic": true, "details": {"platform": "Olink Explore HT", "specimen": "plasma", "assay_id": "MOCK-OLINK-001", "npx": 4.2, "reference_median_npx": 5.6, "delta_npx": -1.4, "z_score": -2.7, "reference_samples": 30, "above_lod": true, "sample_qc": "pass", "assay_qc": "pass", "tissue_note": "Plasma and fibroblast findings are not equivalent tissue measurements"}}, {"id": "A-METAL1", "modality": "exposure", "target": "Lead", "result": "12 \u00b5g/dL \u00b7 above fictional reference", "status": "pass", "synthetic": true, "details": {"specimen": "whole blood", "value": 12, "unit": "\u00b5g/dL", "reference_upper": 4, "reference_status": "Invented UI reference, not a clinical action threshold", "gene_link": null}}, {"id": "A-METAL2", "modality": "exposure", "target": "Mercury", "result": "2 \u00b5g/L \u00b7 within fictional reference", "status": "pass", "synthetic": true, "details": {"specimen": "whole blood", "value": 2, "unit": "\u00b5g/L", "reference_upper": 8, "reference_status": "Invented UI reference", "gene_link": null}}, {"id": "A-CLIN", "modality": "phenotype", "target": "Clinical context", "result": "Fictional childhood-onset weakness and developmental delay", "status": "pass", "synthetic": true, "details": {"onset": "childhood", "features": ["muscle weakness", "developmental delay"], "report": "Entire clinical report is fictional; no real patient source."}}], "hypotheses": [{"id": "A-H1", "gene": "MOCK1", "title": "Gene involvement", "summary": "Mock splice/indel candidates accompany transcript abnormalities and lower protein signal. The measurements support a gene-level exploration; phase, causality and tissue relevance remain separate questions.", "components": {"genetic": {"points": 15, "maximum": 20, "evidence_ids": ["A-DNA1", "A-DNA2"]}, "rna": {"points": 20, "maximum": 25, "evidence_ids": ["A-RNA1", "A-RNA2", "A-RNA3"]}, "protein": {"points": 7.5, "maximum": 20, "evidence_ids": ["A-PROT1"]}, "exposure": {"points": 0, "maximum": 10, "evidence_ids": []}, "phenotype": {"points": 10, "maximum": 20, "evidence_ids": ["A-CLIN"]}, "literature": {"points": 0, "maximum": 5, "evidence_ids": []}}}, {"id": "A-H2", "gene": null, "title": "Exposure alternative", "summary": "The fictional lead result opens an exposure-related alternative. It is not assigned to MOCK1 and does not increase that gene\u2019s score. Timing and phenotype fit are unresolved.", "components": {"genetic": {"points": 0, "maximum": 20, "evidence_ids": []}, "rna": {"points": 0, "maximum": 25, "evidence_ids": []}, "protein": {"points": 0, "maximum": 20, "evidence_ids": []}, "exposure": {"points": 5, "maximum": 10, "evidence_ids": ["A-METAL1"]}, "phenotype": {"points": 0, "maximum": 20, "evidence_ids": []}, "literature": {"points": 0, "maximum": 5, "evidence_ids": []}}}]}, {"id": "MOCK-B", "label": "Discordance and incomplete evidence", "records": [{"id": "B-DNA1", "modality": "genetic", "target": "MOCK2", "result": "SNV \u00b7 heterozygous \u00b7 missense candidate", "status": "pass", "synthetic": true, "details": {"platform": "Oxford Nanopore", "variant": "chr2:200001 C\u003eT", "reference_status": "Invented coordinate; not reference-validated", "depth": 35, "alternate_reads": 17, "genotype": "0/1", "inheritance": "unknown", "mock_evee_pathogenicity": 0.72, "prediction_status": "Illustrative value, not EVEE inference"}}, {"id": "B-DNA2", "modality": "genetic", "target": "MOCK3", "result": "2-bp insertion \u00b7 low call quality", "status": "fail", "synthetic": true, "details": {"platform": "Oxford Nanopore", "variant": "chr3:300001 A\u003eAGT", "depth": 5, "alternate_reads": 2, "genotype": "0/1", "filter": "LOW_DEPTH", "reference_status": "Invented coordinate; not reference-validated"}}, {"id": "B-RNA1", "modality": "rna", "target": "MOCK2", "result": "RNA increased \u00b7 log\u2082 fold change +1.1", "status": "pass", "synthetic": true, "details": {"platform": "PacBio", "specimen": "whole blood", "kind": "gene_abundance", "log2_fold_change": 1.1, "z_score": 2.5, "reference_samples": 24}}, {"id": "B-RNA2", "modality": "rna", "target": "MOCK2", "result": "No detected splice outlier", "status": "pass", "synthetic": true, "details": {"platform": "PacBio", "kind": "splicing", "supporting_reads": 2, "informative_reads": 64, "patient_fraction": 0.031, "reference_fraction": 0.03, "interpretation": "No support for splice disruption; does not exclude other mechanisms"}}, {"id": "B-RNA3", "modality": "rna", "target": "MOCK2", "result": "Allele-specific expression unavailable", "status": "missing", "synthetic": true, "details": {"kind": "allele_specific_expression", "informative_reads": 0, "reason": "No informative transcribed heterozygous sites"}}, {"id": "B-PROT1", "modality": "protein", "target": "MOCK2", "result": "Olink decreased \u00b7 \u0394NPX \u22121.2", "status": "pass", "synthetic": true, "details": {"platform": "Olink Explore HT", "specimen": "plasma", "npx": 3.9, "reference_median_npx": 5.1, "delta_npx": -1.2, "z_score": -2.3, "reference_samples": 30, "above_lod": true, "sample_qc": "pass", "assay_qc": "pass"}}, {"id": "B-PROT2", "modality": "protein", "target": "MOCK3", "result": "Below detection limit", "status": "below_lod", "synthetic": true, "details": {"platform": "Olink Explore HT", "specimen": "plasma", "npx": null, "above_lod": false, "sample_qc": "pass", "assay_qc": "pass", "interpretation": "Not zero protein; no quantitative depletion points"}}, {"id": "B-METAL1", "modality": "exposure", "target": "Lead", "result": "1 \u00b5g/dL \u00b7 within fictional reference", "status": "pass", "synthetic": true, "details": {"specimen": "whole blood", "value": 1, "unit": "\u00b5g/dL", "reference_upper": 4, "reference_status": "Invented UI reference", "gene_link": null}}, {"id": "B-METAL2", "modality": "exposure", "target": "Mercury", "result": "Not measured", "status": "missing", "synthetic": true, "details": {"specimen": "whole blood", "value": null, "unit": "\u00b5g/L", "gene_link": null}}, {"id": "B-CLIN", "modality": "phenotype", "target": "Clinical context", "result": "Fictional adult-onset fatigue and sensory symptoms", "status": "pass", "synthetic": true, "details": {"onset": "adult", "features": ["fatigue", "sensory symptoms"], "report": "Entire clinical report is fictional; no real patient source."}}], "hypotheses": [{"id": "B-H1", "gene": "MOCK2", "title": "Gene involvement", "summary": "RNA increases while protein decreases. Both are displayed as molecular changes; they do not support a simple transcript-depletion explanation. Allelic evidence is unavailable.", "components": {"genetic": {"points": 5, "maximum": 20, "evidence_ids": ["B-DNA1"]}, "rna": {"points": 5, "maximum": 25, "evidence_ids": ["B-RNA1"]}, "protein": {"points": 7.5, "maximum": 20, "evidence_ids": ["B-PROT1"]}, "exposure": {"points": 0, "maximum": 10, "evidence_ids": []}, "phenotype": {"points": 5, "maximum": 20, "evidence_ids": ["B-CLIN"]}, "literature": {"points": 0, "maximum": 5, "evidence_ids": []}}}, {"id": "B-H2", "gene": "MOCK3", "title": "Low-confidence alternative", "summary": "A low-depth indel and a protein measurement below detection remain visible. Neither is treated as reliable quantitative support; the candidate is retained for breadth.", "components": {"genetic": {"points": 0, "maximum": 20, "evidence_ids": []}, "rna": {"points": 0, "maximum": 25, "evidence_ids": []}, "protein": {"points": 0, "maximum": 20, "evidence_ids": []}, "exposure": {"points": 0, "maximum": 10, "evidence_ids": []}, "phenotype": {"points": 0, "maximum": 20, "evidence_ids": []}, "literature": {"points": 0, "maximum": 5, "evidence_ids": []}}}]}]}</script>
+<script>
+const data=JSON.parse(document.getElementById('mock-data').textContent);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const names={genetic:'DNA · SNVs / indels',rna:'Long-read RNA',protein:'Olink proteomics',exposure:'Heavy metals',phenotype:'Phenotype',literature:'Literature'};
+let patient=data.patients[0], selected=patient.hypotheses[0].id;
+const total=h=>Object.values(h.components).reduce((sum,c)=>sum+c.points,0);
+$('notice').textContent=data.notice;
+$('case').innerHTML=data.patients.map(p=>`<option value="${esc(p.id)}">${esc(p.id+' · '+p.label)}</option>`).join('');
+$('modality').innerHTML='<option value="all">All modalities</option>'+Object.entries(names).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+function renderRecords(){
+ const rows=patient.records.filter(r=>$('modality').value==='all'||r.modality===$('modality').value);
+ $('count').textContent=rows.length+' records';
+ $('records').innerHTML=rows.map(r=>`<tr id="${esc(r.id)}" data-record="${esc(r.id)}"><td><strong>${esc(r.target)}</strong></td><td>${names[r.modality]}</td><td>${esc(r.result)}</td><td><span class="mock-tag" data-status="${esc(r.status)}">${esc(r.status.replaceAll('_',' '))}</span></td><td><details><summary>Details · ${esc(r.id)}</summary><pre>${esc(JSON.stringify(r.details,null,2))}</pre></details></td></tr>`).join('')||'<tr><td colspan="5">No records supplied. No missingness penalty.</td></tr>';
+}
+function render(){
+ $('candidates').innerHTML=patient.hypotheses.map(h=>`<button data-hypothesis="${esc(h.id)}" aria-pressed="${h.id===selected}"><strong>${esc(h.gene||h.title)}</strong><small>${total(h)} / 100 · illustrative</small></button>`).join('');
+ const h=patient.hypotheses.find(h=>h.id===selected);
+ $('hypothesis').innerHTML=`<div class="mock-title"><h2>${esc(h.gene||h.title)}</h2><span class="mock-total">${total(h)} <small>/ 100</small></span></div><p>${esc(h.summary)}</p><div class="mock-score-grid">${Object.entries(h.components).map(([k,c])=>`<div class="mock-score" data-category="${k}">${names[k]}<strong>${c.points} / ${c.maximum}</strong><div class="mock-bar"><span style="width:${100*c.points/c.maximum}%"></span></div><div class="mock-links">${c.evidence_ids.map(id=>`<a href="#${esc(id)}" data-source="${esc(id)}">${esc(id)}</a>`).join('')}</div></div>`).join('')}</div><p>${esc(data.score_note)}</p><p>Literature and agent review: not run. No invented citations.</p>`;
+ renderRecords();
+}
+$('case').onchange=()=>{patient=data.patients.find(p=>p.id===$('case').value);selected=patient.hypotheses[0].id;$('modality').value='all';render()};
+$('modality').onchange=renderRecords;
+document.addEventListener('click',event=>{
+ const h=event.target.closest('[data-hypothesis]');if(h){selected=h.dataset.hypothesis;render()}
+ const link=event.target.closest('[data-source]');if(link){event.preventDefault();$('modality').value='all';renderRecords();const row=$(link.dataset.source);row.querySelector('details').open=true;row.scrollIntoView({behavior:'smooth',block:'center'});history.replaceState(null,'','#'+link.dataset.source)}
+});
+$('download').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='mock_multimodal_v3.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+render();
+</script></body></html>
