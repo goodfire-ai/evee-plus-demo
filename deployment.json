@@ -1,10 +1,11 @@
 {
   "source_repository": "goodfire-ai/evee-plus-dev",
-  "source_commit": "e19409982c212a9c585697da933e02046b4c4d29",
+  "source_commit": "fa41123b5d431af496714c15c92c605cfa77a374",
   "description": "Static EVEE+ demo exported from published Hock/KS research data, plus an explicitly synthetic UI preview. No server, credentials, model weights or source repository history included.",
   "files": {
-    "index.html": "b2382e38bf3b98728217d8127dcba2352ecf26cc4d445f56fc59788096c74e8f",
-    "ks.html": "0a0709d0196a3f9c9f68491e8d48d7d69e6659b4fc14f57ee9820dc13e069100",
-    "mock.html": "9666fd263f920ebbe99ce343546361b48736c2086265e35ca770a4e2353e5552"
+    "index.html": "dc27d54a76917ddb23b379bcd53e4b488b329ef45c913982cda667716a7f3870",
+    "hock.html": "c3d4482889e5530aa91614aa3cecbafc5d2fcb3e2e0bbc03bdb63b980a79f5af",
+    "ks.html": "c3bd94e9da06939a947f41deaf85e14f35f76c4ea3ef39bce34e3804b2bcd729",
+    "mock.html": "3596bf1f85624590550dfdbd34cac990846953be5bc9f7b22aec4f27714da38f"
   }
 }
